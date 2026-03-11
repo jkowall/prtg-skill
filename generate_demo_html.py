@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Generate HTML demo walkthrough + redesigned dashboard in demo/ subdirectory."""
+"""Generate HTML demo walkthrough + redesigned dashboard in a target subdirectory."""
 
 import subprocess, json, glob, urllib.parse, os, html as html_mod, collections
+import sys
 from datetime import datetime
 
 # --- PRTG connection ---
@@ -34,7 +35,8 @@ def get_ts_named(sensor_id, window='medium'):
             rows.append(named)
     return rows, ch_map
 
-os.makedirs('demo', exist_ok=True)
+OUT_DIR = sys.argv[1] if len(sys.argv) > 1 else 'demo'
+os.makedirs(OUT_DIR, exist_ok=True)
 E = html_mod.escape
 NOW = datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')
 
@@ -280,7 +282,7 @@ sorted_devs = sorted(by_device.items(), key=lambda x: -len(x[1]))
 # =====================================================================
 # WALKTHROUGH (index.html) — keep mostly the same but link to new dashboard
 # =====================================================================
-print("Generating demo/index.html...")
+print(f"Generating {OUT_DIR}/index.html...")
 
 wt = f"""<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>PRTG Skill Demo Walkthrough</title><style>{SPECTRUM_CSS}</style></head><body><div class="container">
@@ -424,14 +426,14 @@ wt += """<div class="card" style="margin-top:32px"><h2 style="margin-top:0">Reca
 <p style="margin-top:8px"><strong>8 prompts &bull; ~10 minutes &bull;</strong> Replaces hours of UI clicks and custom dashboard development.</p>
 </div></div></body></html>"""
 
-with open('demo/index.html', 'w', encoding='utf-8') as f:
+with open(os.path.join(OUT_DIR, 'index.html'), 'w', encoding='utf-8') as f:
     f.write(wt)
-print("  -> demo/index.html")
+print(f"  -> {OUT_DIR}/index.html")
 
 # =====================================================================
 # DASHBOARD (dashboard.html) — redesigned
 # =====================================================================
-print("Generating demo/dashboard.html...")
+print(f"Generating {OUT_DIR}/dashboard.html...")
 
 # Prepare chart JSON
 chart_json = json.dumps(chart_data, default=str)
@@ -611,13 +613,13 @@ Object.entries(tsData).forEach(([title, data], idx) => {{
 }});
 </script></body></html>"""
 
-with open('demo/dashboard.html', 'w', encoding='utf-8') as f:
+with open(os.path.join(OUT_DIR, 'dashboard.html'), 'w', encoding='utf-8') as f:
     f.write(dash)
-print("  -> demo/dashboard.html")
+print(f"  -> {OUT_DIR}/dashboard.html")
 
 # Cleanup temp files
-for f in ['demo/_chart_data.json', 'demo/_ssl_data.json']:
+for f in [os.path.join(OUT_DIR, '_chart_data.json'), os.path.join(OUT_DIR, '_ssl_data.json')]:
     if os.path.exists(f):
         os.remove(f)
 
-print(f"\nDone! Open demo/index.html or demo/dashboard.html in a browser.")
+print(f"\nDone! Open {OUT_DIR}/index.html or {OUT_DIR}/dashboard.html in a browser.")

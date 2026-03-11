@@ -1,0 +1,270 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PRTG Skill Demo Walkthrough</title><style>
+:root {
+  --font: Roboto, "Segoe UI", Tahoma, Arial, Helvetica, Verdana, sans-serif;
+  --mono: inconsolata, monospace;
+  --brand: #050F34; --base: #31343F; --alt: #686B76; --disabled: #A4A6AF;
+  --accent: #0F67FF; --danger: #E3063D; --warning-text: #A04B00; --success-text: #697000;
+  --bg-body: #F9F9FA; --bg-card: #FFFFFF; --bg-alt: #F9F9FA; --bg-alt2: #F1F1F3; --bg-alt3: #E5E6E9;
+  --bg-accent: #0F67FF; --bg-danger-soft: #FFF6F8; --bg-warning-soft: #FFF8F3; --bg-success-soft: #FDFFEB;
+  --border: #DBDCDF; --border2: #E5E6E9; --border3: #F1F1F3;
+  --fill-danger: #E3063D; --fill-warning: #DE6800; --fill-success: #8F9900;
+  --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+  --shadow2: 0 4px 12px rgba(0,0,0,.1), 0 2px 4px rgba(0,0,0,.06);
+  --r: 4px; --rl: 8px;
+  --c1: #0F67FF; --c2: #A4AD19; --c3: #DE6800; --c4: #0097B2; --c5: #8A3FFC; --c6: #D12771;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);font-size:14px;line-height:20px;color:var(--base);background:var(--bg-body)}
+h1{font-size:26px;line-height:32px;color:var(--brand);font-weight:700;margin:0 0 4px}
+h2{font-size:20px;line-height:28px;color:var(--brand);font-weight:700;margin:24px 0 12px}
+h3{font-size:16px;line-height:24px;color:var(--brand);font-weight:500;margin:16px 0 8px}
+a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+code{font-family:var(--mono);background:var(--bg-alt2);padding:2px 6px;border-radius:3px;font-size:13px}
+.container{max-width:1280px;margin:0 auto;padding:24px}
+table{border-collapse:collapse;width:100%;margin:8px 0}
+th,td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--border2);font-size:13px}
+th{background:var(--bg-alt2);font-weight:500;color:var(--brand);position:sticky;top:0}
+tr:hover{background:var(--bg-alt)}
+.card{background:var(--bg-card);border-radius:var(--rl);box-shadow:var(--shadow);padding:20px;margin:12px 0}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500}
+.b-up{background:var(--bg-success-soft);color:var(--fill-success)}
+.b-down{background:var(--bg-danger-soft);color:var(--fill-danger)}
+.b-warn{background:var(--bg-warning-soft);color:var(--fill-warning)}
+.b-other{background:var(--bg-alt2);color:var(--disabled)}
+.prompt-box{background:#1D202B;color:#E5E6E9;padding:16px 20px;border-radius:var(--rl);font-family:var(--mono);font-size:13px;margin:12px 0;white-space:pre-wrap;line-height:1.5}
+.prompt-box .pfx{color:#74ABFF}
+.kpi-row{display:flex;gap:16px;flex-wrap:wrap;margin:16px 0}
+.kpi{background:var(--bg-card);border-radius:var(--rl);box-shadow:var(--shadow);padding:16px 24px;text-align:center;min-width:100px;flex:1}
+.kpi .num{font-size:32px;font-weight:700;color:var(--brand)} .kpi .lbl{font-size:12px;color:var(--alt);margin-top:2px}
+.chart-card{background:var(--bg-card);border-radius:var(--rl);box-shadow:var(--shadow);padding:16px;margin:12px 0}
+.chart-card h3{margin:0 0 8px;font-size:14px}
+.chart-wrap{position:relative;height:220px}
+.nav{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}
+.nav a{padding:6px 14px;background:var(--bg-card);border-radius:var(--r);box-shadow:var(--shadow);font-size:13px}
+.nav a:hover{background:var(--bg-alt)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px} @media(max-width:900px){.grid-2{grid-template-columns:1fr}}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px} @media(max-width:1000px){.grid-3{grid-template-columns:1fr 1fr}} @media(max-width:600px){.grid-3{grid-template-columns:1fr}}
+.act{border-left:4px solid var(--bg-accent);padding-left:20px;margin:32px 0}
+.act-hdr{display:flex;align-items:center;gap:12px}
+.act-n{background:var(--bg-accent);color:white;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;flex-shrink:0}
+.note{background:var(--bg-alt);border-radius:var(--r);padding:10px 14px;margin:8px 0;font-size:13px;color:var(--alt);border-left:3px solid var(--border)}
+.sim{background:#FFFCF3;border-left:3px solid var(--fill-warning);padding:10px 14px;border-radius:var(--r);margin:8px 0;font-size:13px}
+.timestamp{color:var(--alt);font-size:12px}
+.ssl-bar{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border3)}
+.ssl-bar:last-child{border:none}
+.ssl-fill{height:16px;border-radius:3px;min-width:2px}
+.ssl-label{font-size:12px;min-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ssl-days{font-size:12px;font-weight:500;min-width:60px;text-align:right}
+.health-ring{position:relative;width:160px;height:160px;margin:0 auto}
+</style></head><body><div class="container">
+<h1>PRTG Skill Demo &mdash; Full Walkthrough</h1>
+<p class="timestamp">https://amer.prtgdemo.com:1616 &bull; Snapshot: 2026-03-11 21:34 UTC</p>
+<p style="margin:8px 0">Output from all 8 acts of the PRTG Skill demo against the live PRTG instance.</p>
+<div class="nav">
+  <a href="#summary">Summary</a><a href="#act1">1: Orientation</a><a href="#act2">2: Triage</a>
+  <a href="#act3">3: Investigation</a><a href="#act4">4: Actions</a><a href="#act5">5: Provisioning</a>
+  <a href="#act6">6: Dashboard</a><a href="#act7">7: Charts</a><a href="#act8">8: Cleanup</a>
+  <a href="dashboard.html" style="background:var(--bg-accent);color:white">Live Dashboard &rarr;</a>
+</div>
+
+<div id="summary" class="card">
+<h2 style="margin-top:0">Demo Script Summary</h2>
+<p>An 8-act scripted walkthrough of the PRTG skill for Claude Code. Each act is one natural-language prompt.</p>
+<h3>Prerequisites</h3>
+<ul style="margin:8px 0 8px 24px;font-size:13px">
+  <li>PRTG skill installed at <code>~/.claude/skills/prtg</code></li>
+  <li><code>prtg.env</code> with PRTG_HOST and PRTG_API_KEY</li>
+  <li>PRTG instance with devices in DOWN/WARNING state for interesting triage</li>
+</ul>
+<table><tr><th>Act</th><th>Title</th><th>Capability Shown</th></tr>
+<tr><td>1</td><td>Orientation</td><td>Multi-endpoint aggregation &rarr; infrastructure overview</td></tr>
+<tr><td>2</td><td>Triage</td><td>Filtered queries + grouping &rarr; find all problems</td></tr>
+<tr><td>3</td><td>Investigation</td><td>Multi-step analysis &rarr; deep dive with timeseries</td></tr>
+<tr><td>4</td><td>Take Action</td><td>Write operations &rarr; acknowledge + pause</td></tr>
+<tr><td>5</td><td>Provisioning</td><td>POST + create &rarr; add sensors on the fly</td></tr>
+<tr><td>6</td><td>Dashboard</td><td>HTML generation with Spectrum design tokens</td></tr>
+<tr><td>7</td><td>Charts</td><td>Chart.js + channel name mapping</td></tr>
+<tr><td>8</td><td>Cleanup</td><td>Delete + resume &rarr; full lifecycle</td></tr>
+</table></div>
+
+<div id="act1" class="act"><div class="act-hdr"><div class="act-n">1</div><h2>Orientation</h2></div>
+<div class="prompt-box"><span class="pfx">&gt; </span>/prtg Give me a high-level overview of this PRTG installation. Summarize the health.</div>
+<div class="note">Queries probes, groups, devices (with sensor_status_summary), and sensors in parallel.</div>
+<div class="kpi-row">
+  <div class="kpi"><div class="num">3</div><div class="lbl">Probes</div></div>
+  <div class="kpi"><div class="num">48</div><div class="lbl">Groups</div></div>
+  <div class="kpi"><div class="num">240</div><div class="lbl">Devices</div></div>
+  <div class="kpi"><div class="num">2621</div><div class="lbl">Sensors</div></div>
+</div>
+<div class="grid-2"><div class="card"><h3>Sensor Health</h3><table><tr><th>Status</th><th>Count</th><th>%</th></tr>
+<tr><td><span class="badge b-up">UP</span></td><td>2408</td><td>91.9%</td></tr>
+<tr><td><span class="badge b-warn">WARNING</span></td><td>80</td><td>3.1%</td></tr>
+<tr><td><span class="badge b-down">DOWN</span></td><td>57</td><td>2.2%</td></tr>
+<tr><td><span class="badge b-other">PAUSED_BY_DEPENDENCY</span></td><td>50</td><td>1.9%</td></tr>
+<tr><td><span class="badge b-warn">UNUSUAL</span></td><td>12</td><td>0.5%</td></tr>
+<tr><td><span class="badge b-other">UNKNOWN</span></td><td>11</td><td>0.4%</td></tr>
+<tr><td><span class="badge b-down">DOWN_ACKNOWLEDGED</span></td><td>2</td><td>0.1%</td></tr>
+<tr><td><span class="badge b-other">PAUSED_BY_USER</span></td><td>1</td><td>0.0%</td></tr>
+</table></div><div class="card"><h3>Device Status</h3><table><tr><th>Status</th><th>Count</th></tr>
+<tr><td><span class="badge b-up">UP</span></td><td>237</td></tr>
+<tr><td><span class="badge b-other">PAUSED_BY_DEPENDENCY</span></td><td>3</td></tr>
+</table></div></div></div>
+<div id="act2" class="act"><div class="act-hdr"><div class="act-n">2</div><h2>Triage</h2></div>
+<div class="prompt-box"><span class="pfx">&gt; </span>/prtg Show me everything down or warning. Group by device.</div>
+<div class="note">Filters by status=down and status=warning, groups by parent device.</div>
+<div class="kpi-row">
+  <div class="kpi"><div class="num" style="color:var(--fill-danger)">57</div><div class="lbl">DOWN</div></div>
+  <div class="kpi"><div class="num" style="color:var(--fill-warning)">80</div><div class="lbl">WARNING</div></div>
+  <div class="kpi"><div class="num">70</div><div class="lbl">Affected Devices</div></div>
+</div>
+<table><tr><th>Device</th><th>ID</th><th>#</th><th>Sensors</th></tr>
+<tr><td><strong>Exchange</strong></td><td>6858</td><td>45</td><td>Pagefile Usage, Disk IO _Total, Disk IO 0 C: <em>(+42)</em></td></tr>
+<tr><td><strong>Microsoft 365</strong></td><td>2212</td><td>6</td><td>Microsoft 365 Service Status, Exchange Online Service Status, Microsoft 365 suite Service Status <em>(+3)</em></td></tr>
+<tr><td><strong>ESXi host 10</strong></td><td>3344</td><td>4</td><td>SSL Certificate Sensor (Port 443), (009) vmk0- Traffic, (010) vmk1- Traffic <em>(+1)</em></td></tr>
+<tr><td><strong>PRTG Data Exporter</strong></td><td>8019</td><td>3</td><td>Service PRTG Data Exporter - Historic Data Polling Task, Service PRTG Data Exporter - Tree Data Polling Task, SSL Certificate Sensor (Port 443)</td></tr>
+<tr><td><strong>ESXi host 12</strong></td><td>3451</td><td>3</td><td>SSL Certificate Sensor (Port 443), (003) 24:00.0 Traffic, VMWARE-RESOURCES-MIB vmw storage</td></tr>
+<tr><td><strong>Dell PowerEdge R730 iDrac 8</strong></td><td>2877</td><td>3</td><td>SSL Certificate Sensor (Port 443), SSL Security Check (Port 443), System Health: System (CN7016366D00M1)</td></tr>
+<tr><td><strong>ITOps Board</strong></td><td>6370</td><td>2</td><td>Windows Updates Status, SSL Certificate Sensor (Port 443)</td></tr>
+<tr><td><strong>QNAP</strong></td><td>4587</td><td>2</td><td>SSL Certificate Sensor (Port 443), SSL Security Check (Port 443)</td></tr>
+<tr><td><strong>Rittal PDU DK 7979.411</strong></td><td>5751</td><td>2</td><td>HTTP, SSL Certificate Sensor (Port 443)</td></tr>
+<tr><td><strong>Probe Device</strong></td><td>40</td><td>2</td><td>PRTG Webserver Login failed, Check restart core server service activated by user</td></tr>
+<tr><td><strong>HPE Aruba 2530</strong></td><td>2083</td><td>2</td><td>Port State 1-10, Syslog Status</td></tr>
+<tr><td><strong>ESXi host 11</strong></td><td>3429</td><td>2</td><td>SSL Certificate Sensor (Port 443), (010) vmk1- Traffic</td></tr>
+<tr><td><strong>APC Smart UPS 1500</strong></td><td>4816</td><td>2</td><td>SSL Certificate Sensor (Port 443), SSL Security Check (Port 443)</td></tr>
+<tr><td><strong>PRTG OPC UA Server</strong></td><td>6344</td><td>2</td><td>Network, PLCs</td></tr>
+<tr><td><strong>Rittal IoT Interface</strong></td><td>5886</td><td>2</td><td>SSL Certificate Sensor (Port 443), Processing Unit System</td></tr>
+<tr><td colspan="4" style="color:var(--alt);font-style:italic">+55 more devices</td></tr>
+</table></div>
+<div id="act3" class="act"><div class="act-hdr"><div class="act-n">3</div><h2>Investigation</h2></div>
+<div class="prompt-box"><span class="pfx">&gt; </span>/prtg Deep dive on the worst device. All sensors, status timestamps, timeseries for anything down.</div>
+<div class="note">Identifies worst device, queries all sensors via parentid, fetches status_since and timeseries.</div>
+<h3>Exchange (ID: 6858) &mdash; 45 problems</h3>
+<table><tr><th>Sensor</th><th>Status</th><th>Since</th></tr>
+<tr><td>Ping</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:13:31 UTC</td></tr>
+<tr><td>(012) Ethernet0 Traffic</td><td><span class="badge b-warn">UNUSUAL</span></td><td class='timestamp'>2026-03-11 21:26:26 UTC</td></tr>
+<tr><td>CPU Load</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:13:30 UTC</td></tr>
+<tr><td>Uptime</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:13:28 UTC</td></tr>
+<tr><td>Memory: Physical Memory</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:13:34 UTC</td></tr>
+<tr><td>Memory: Virtual Memory</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:13:31 UTC</td></tr>
+<tr><td>Pagefile Usage</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:23:36 UTC</td></tr>
+<tr><td>Disk IO _Total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:21:01 UTC</td></tr>
+<tr><td>Disk IO 0 C:</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:24:31 UTC</td></tr>
+<tr><td>SSL Certificate Sensor (Port 993)</td><td><span class="badge b-warn">WARNING</span></td><td class='timestamp'>2026-03-11 07:13:28 UTC</td></tr>
+<tr><td>SSL Certificate Sensor (Port 995)</td><td><span class="badge b-warn">WARNING</span></td><td class='timestamp'>2026-03-11 07:13:31 UTC</td></tr>
+<tr><td>SSL Security Check (Port 993)</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:13:32 UTC</td></tr>
+<tr><td>SSL Security Check (Port 995)</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:14:37 UTC</td></tr>
+<tr><td>Volume IO C:</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:22:36 UTC</td></tr>
+<tr><td>HTTPS</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:14:17 UTC</td></tr>
+<tr><td>RDP (Remote Desktop)</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:13:33 UTC</td></tr>
+<tr><td>IMAP</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:13:31 UTC</td></tr>
+<tr><td>POP3</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:13:28 UTC</td></tr>
+<tr><td>SMTP</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:15:07 UTC</td></tr>
+<tr><td>App Pool MSExchangeAutodiscoverAppPool</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 20:56:06 UTC</td></tr>
+<tr><td>App Pool MSExchangeMapiAddressBookAppPool</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:14:46 UTC</td></tr>
+<tr><td>App Pool MSExchangeMapiMailboxAppPool</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:13:41 UTC</td></tr>
+<tr><td>App Pool MSExchangeMapiFrontEndAppPool</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:13:29 UTC</td></tr>
+<tr><td>MSExchange OWA: Average Response Time</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:21:21 UTC</td></tr>
+<tr><td>MSExchange RPC Client Access: Active User Count</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:20:41 UTC</td></tr>
+<tr><td>IIS Current Auth. Users</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:13:33 UTC</td></tr>
+<tr><td>IIS Current Connections</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:13:27 UTC</td></tr>
+<tr><td>Exchange Database Backup: Mailbox Database 01</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 15:14:27 UTC</td></tr>
+<tr><td>Exchange Database: Mailbox Database 01</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 15:10:57 UTC</td></tr>
+<tr><td>Exchange Mail Queue</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 15:13:57 UTC</td></tr>
+<tr><td>Exchange Mailbox: Microsoft Exchange</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 15:14:42 UTC</td></tr>
+<tr><td>Exchange Mailbox: Microsoft Exchange Migration</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 15:11:57 UTC</td></tr>
+<tr><td>MSExchange OWA: Average Response Time</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:22:56 UTC</td></tr>
+<tr><td>MSExchange OWA: Current Unique Users</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:21:36 UTC</td></tr>
+<tr><td>MSExchange RPC Client Access: Active User Count</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:22:41 UTC</td></tr>
+<tr><td>MSExchange RPC Client Access: Connection Count</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:21:16 UTC</td></tr>
+<tr><td>MSExchange RPC Client Access: User Count</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:24:56 UTC</td></tr>
+<tr><td>Active Mailbox Delivery Queue Length _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:22:21 UTC</td></tr>
+<tr><td>Active Non-Smtp Delivery Queue Length _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:22:46 UTC</td></tr>
+<tr><td>Aggregate Shadow Queue Length _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:25:01 UTC</td></tr>
+<tr><td>Items Completed Delivery Per Second _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 15:59:13 UTC</td></tr>
+<tr><td>Items Completed Delivery Total _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:23:16 UTC</td></tr>
+<tr><td>Items Deleted By Admin Total _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:23:52 UTC</td></tr>
+<tr><td>Items Queued For Delivery Expired Total _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:21:46 UTC</td></tr>
+<tr><td>Items Queued for Delivery Per Second _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:22:07 UTC</td></tr>
+<tr><td>Items Queued For Delivery Total _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:20:46 UTC</td></tr>
+<tr><td>Items Resubmitted Total _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:23:46 UTC</td></tr>
+<tr><td>Messages Completed Delivery Per Second _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:23:26 UTC</td></tr>
+<tr><td>Messages Completed Delivery Total _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:24:11 UTC</td></tr>
+<tr><td>Messages Completing Categorization _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:21:51 UTC</td></tr>
+<tr><td>Messages Deferred during Categorization _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:05:16 UTC</td></tr>
+<tr><td>Messages Queued For Delivery _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:20:51 UTC</td></tr>
+<tr><td>Messages Queued for Delivery Per Second _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:24:06 UTC</td></tr>
+<tr><td>Messages Queued For Delivery Total _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:24:21 UTC</td></tr>
+<tr><td>Messages Submitted Per Second _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:22:11 UTC</td></tr>
+<tr><td>Messages Submitted Total _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:21:31 UTC</td></tr>
+<tr><td>Poison Queue Length _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:24:51 UTC</td></tr>
+<tr><td>Retry Mailbox Delivery Queue Length _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:25:16 UTC</td></tr>
+<tr><td>Retry Non-Smtp Delivery Queue Length _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:23:01 UTC</td></tr>
+<tr><td>Shadow Queue Auto Discards Total _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:23:31 UTC</td></tr>
+<tr><td>Submission Queue Items Expired Total _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:21:41 UTC</td></tr>
+<tr><td>Submission Queue Length _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:25:11 UTC</td></tr>
+<tr><td>Unreachable Queue Length _total</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 16:05:21 UTC</td></tr>
+</table>
+<h3>PRTG Data Exporter (ID: 8019) &mdash; 2 DOWN services</h3>
+<table><tr><th>Sensor</th><th>Status</th><th>Since</th></tr>
+<tr><td>Ping</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:13:32 UTC</td></tr>
+<tr><td>Uptime</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:19:13 UTC</td></tr>
+<tr><td>CPU Load</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:19:03 UTC</td></tr>
+<tr><td>Memory: Physical Memory</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:18:38 UTC</td></tr>
+<tr><td>Memory: Virtual Memory</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:19:23 UTC</td></tr>
+<tr><td>RDP (Remote Desktop)</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:13:27 UTC</td></tr>
+<tr><td>(004) Ethernet0 Traffic</td><td><span class="badge b-warn">UNUSUAL</span></td><td class='timestamp'>2026-03-11 07:19:08 UTC</td></tr>
+<tr><td>Disk Free: C:\ Label:  Serial Number e6cb3993</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:19:43 UTC</td></tr>
+<tr><td>SSL Certificate Sensor (Port 443)</td><td><span class="badge b-warn">WARNING</span></td><td class='timestamp'>2026-03-11 07:19:19 UTC</td></tr>
+<tr><td>SSL Security Check (Port 443)</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:18:43 UTC</td></tr>
+<tr><td>Pagefile Usage</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:13:27 UTC</td></tr>
+<tr><td>Disk IO _Total</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:18:37 UTC</td></tr>
+<tr><td>Disk IO 0 C:</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:19:55 UTC</td></tr>
+<tr><td>HTTPS v2</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:19:38 UTC</td></tr>
+<tr><td>IIS _Total</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:18:14 UTC</td></tr>
+<tr><td>IIS Default Web Site</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:18:59 UTC</td></tr>
+<tr><td>IIS prtg-data-exporter</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:18:10 UTC</td></tr>
+<tr><td>IIS Current Auth. Users</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:18:48 UTC</td></tr>
+<tr><td>IIS Current Connections</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:18:28 UTC</td></tr>
+<tr><td>IIS Current Users</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:19:49 UTC</td></tr>
+<tr><td>IIS Files Received</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:20:08 UTC</td></tr>
+<tr><td>IIS Files Sent</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:19:28 UTC</td></tr>
+<tr><td>App Pool PRTGDataExporterAppPool</td><td><span class="badge b-up">UP</span></td><td class='timestamp'>2026-03-11 07:19:33 UTC</td></tr>
+<tr><td>Service PRTG Data Exporter - Historic Data Polling Task</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 07:18:53 UTC</td></tr>
+<tr><td>Service PRTG Data Exporter - Tree Data Polling Task</td><td><span class="badge b-down">DOWN</span></td><td class='timestamp'>2026-03-11 07:18:23 UTC</td></tr>
+</table></div>
+<div id="act4" class="act"><div class="act-hdr"><div class="act-n">4</div><h2>Take Action</h2></div>
+<div class="prompt-box"><span class="pfx">&gt; </span>/prtg Acknowledge all down sensors with "Investigating - INC-4521". Pause the device.</div>
+<div class="sim"><strong>Simulated</strong> (shared demo server). Claude would call:
+<code>POST /sensors/{id}/acknowledge</code> for each DOWN sensor, then <code>POST /devices/8019/pause</code>.</div></div>
+<div id="act5" class="act"><div class="act-hdr"><div class="act-n">5</div><h2>Provisioning</h2></div>
+<div class="prompt-box"><span class="pfx">&gt; </span>/prtg Add a Ping sensor called "Uptime Watchdog" to a healthy device. Trigger a scan.</div>
+<div class="sim"><strong>Simulated.</strong> Claude would <code>POST /experimental/devices/{id}/sensor?kindid=ping</code> then <code>POST /sensors/{id}/scan</code>.</div></div>
+<div id="act6" class="act"><div class="act-hdr"><div class="act-n">6</div><h2>Dashboard</h2></div>
+<div class="prompt-box"><span class="pfx">&gt; </span>/prtg Build a Spectrum-themed dashboard with health overview, SSL expiry, key metrics, and problem list.</div>
+<div class="card" style="text-align:center;padding:20px">
+  <p>Generated with live data from 240 devices and 2621 sensors.</p>
+  <a href="dashboard.html" style="display:inline-block;padding:10px 28px;background:var(--bg-accent);color:white;border-radius:var(--rl);font-weight:500;margin-top:8px;text-decoration:none">Open Dashboard &rarr;</a>
+</div></div>
+<div id="act7" class="act"><div class="act-hdr"><div class="act-n">7</div><h2>Charts</h2></div>
+<div class="prompt-box"><span class="pfx">&gt; </span>/prtg Add timeseries charts: CPU, memory, network traffic, ping latency. Spectrum colors.</div>
+<div class="card" style="text-align:center;padding:20px">
+  <p>Chart.js charts with 30-day trends are embedded in the dashboard.</p>
+  <a href="dashboard.html#charts" style="display:inline-block;padding:10px 28px;background:var(--bg-accent);color:white;border-radius:var(--rl);font-weight:500;margin-top:8px;text-decoration:none">View Charts &rarr;</a>
+</div></div>
+<div id="act8" class="act"><div class="act-hdr"><div class="act-n">8</div><h2>Cleanup</h2></div>
+<div class="prompt-box"><span class="pfx">&gt; </span>/prtg Resume the paused device. Delete the test sensor.</div>
+<div class="sim"><strong>Simulated.</strong> <code>POST /devices/{id}/resume</code> + <code>DELETE /experimental/sensors/{id}</code>.</div></div>
+<div class="card" style="margin-top:32px"><h2 style="margin-top:0">Recap</h2>
+<table><tr><th>Act</th><th>What</th><th>Capability</th></tr>
+<tr><td>1</td><td>Infrastructure overview</td><td>Multi-endpoint aggregation</td></tr>
+<tr><td>2</td><td>Triage all problems</td><td>Filtered queries + grouping</td></tr>
+<tr><td>3</td><td>Deep investigation</td><td>Multi-step analysis + context carryover</td></tr>
+<tr><td>4</td><td>Acknowledge + pause</td><td>Write operations</td></tr>
+<tr><td>5</td><td>Create sensor</td><td>Provisioning</td></tr>
+<tr><td>6</td><td>Status dashboard</td><td>HTML + Spectrum design system</td></tr>
+<tr><td>7</td><td>Timeseries charts</td><td>Chart.js + channel mapping</td></tr>
+<tr><td>8</td><td>Cleanup</td><td>Full CRUD lifecycle</td></tr>
+</table>
+<p style="margin-top:8px"><strong>8 prompts &bull; ~10 minutes &bull;</strong> Replaces hours of UI clicks and custom dashboard development.</p>
+</div></div></body></html>

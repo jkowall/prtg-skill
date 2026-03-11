@@ -13,7 +13,7 @@ When you run `/prtg <task>`, Claude will:
 ## Install
 
 ```bash
-git clone https://github.com/<your-username>/prtg-skill ~/.claude/skills/prtg
+git clone https://github.com/paesslerdavid/prtg-skill ~/.claude/skills/prtg
 ```
 
 Or copy the `prtg-skill/` directory directly:

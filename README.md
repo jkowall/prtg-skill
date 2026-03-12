@@ -9,6 +9,8 @@ When you run `/prtg <task>`, Claude will:
 - Query the PRTG API v2 using the correct endpoint paths, filter syntax, and auth patterns
 - Apply all known API quirks and gotchas automatically
 - Generate Spectrum-themed HTML dashboards when asked
+- Offer richer visualization presets (heatmaps, timeline stacks, SLA bars, flap ranking, dependency views)
+- Use API v1 only as a targeted fallback when required by endpoint/version gaps
 
 ## Install
 
@@ -74,7 +76,8 @@ prtg-skill/
 │   ├── api-endpoints.md             ← All 115 operations: paths, params, response codes
 │   ├── api-filtering.md             ← Filter syntax, operators, filterable properties
 │   ├── api-schemas.md               ← Request/response body schemas
-│   └── spectrum-design-system.md   ← Paessler design tokens for dashboard styling
+│   ├── spectrum-design-system.md    ← Paessler design tokens for dashboard styling
+│   └── visualization-patterns.md    ← Visualization module catalog + v2/v1 fallback strategy
 └── scripts/
     ├── update_docs.py               ← Refresh API docs from live PRTG server
     └── fetch_spectrum.py            ← Download spectrum.css from PRTG server
@@ -91,5 +94,5 @@ The reference docs are a snapshot from a PRTG QA instance. Run `update_docs.py` 
 ## Notes
 
 - **`spectrum.css` is not bundled** — licensing is uncertain. Use `fetch_spectrum.py` to download it from your own PRTG server, or copy it from the PRTG installation directory (`C:\Program Files (x86)\PRTG Network Monitor\webroot\`).
-- The skill is designed for **PRTG API v2** only (not the legacy v1 API).
+- The skill is **v2-first**. API v1 may be used only as a narrow fallback for unsupported visualization data paths.
 - Auto-invocation is disabled (`disable-model-invocation: true`) — you must explicitly type `/prtg`.

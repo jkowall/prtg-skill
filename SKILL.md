@@ -63,6 +63,7 @@ Read these files on-demand (they are large — only read what you need):
 - **`${CLAUDE_SKILL_DIR}/references/api-filtering.md`** — Filter syntax, operators, filterable properties, enum values, and common pitfalls. Read this before constructing any `filter=` query.
 - **`${CLAUDE_SKILL_DIR}/references/api-schemas.md`** — Request/response body schemas with field names, types, and descriptions. Read this when you need to construct a request body or understand a response.
 - **`${CLAUDE_SKILL_DIR}/references/spectrum-design-system.md`** — Spectrum design token reference (colors, typography, spacing, status mappings). **Read this before generating any frontend/dashboard code.**
+- **`${CLAUDE_SKILL_DIR}/references/visualization-patterns.md`** — Visualization module catalog with v2-first query plans and v1 fallback triggers. Read this for richer dashboards (heatmaps, timeline stacks, SLA bars, flap ranking, dependency views).
 
 ## Critical Gotchas & Lessons Learned
 
@@ -258,6 +259,47 @@ while True:
 - Grid lines: `#F1F1F3`. Font: Roboto.
 - **Always label channels by name** (e.g. "Response Time"), not by channel ID (e.g. "2490.0"). Map `channel_id → name` via the channels endpoint before rendering.
 - When rendering charts in expandable/hidden containers: wrap each `<canvas>` in a fixed-height `<div>` with `overflow: hidden; position: relative`. Create charts with `requestAnimationFrame` after the container becomes visible.
+
+### Visualization Presets (v2 First)
+
+When a user asks for "more visuals", pick one preset and compose modules from `references/visualization-patterns.md`:
+
+- `exec-view`: status heatmap + blast radius + top incident list
+- `ops-view`: 24h status timeline + flapping leaderboard + capacity forecast
+- `security-view`: SSL expiry tiers + vulnerable endpoints + cert trend
+
+For each module:
+
+1. List the exact endpoints used.
+2. State data source as `v2` or `v1-fallback`.
+3. Keep color/status mapping Spectrum-compliant.
+
+### API v1 Fallback Policy
+
+- Default to API v2 for all reads/writes.
+- Use API v1 only when v2 cannot serve the required visualization (for example endpoint `404/501` or missing required fields).
+- If any module uses v1, explicitly disclose it in output.
+- Do not switch the whole task to v1 if only one module needs fallback.
+
+Minimal fallback pattern:
+
+```python
+import subprocess, json
+
+def prtg_get_v1(path):
+    # Uses the same token, but v1 expects query params.
+    r = subprocess.run(
+        ['curl', '-s', '-k', f'{HOST}/api/{path}&apitoken={KEY}'],
+        capture_output=True, text=True, timeout=30)
+    if not r.stdout.strip():
+        raise RuntimeError(f"Empty v1 response (path={path})")
+    return json.loads(r.stdout)
+```
+
+Common v1 fallback endpoints for visuals:
+
+- Object tables: `table.json?content=sensors|devices|groups&output=json`
+- Historic series: `historicdata.json?id=<sensorid>&avg=<seconds>&sdate=<start>&edate=<end>`
 
 ## Scripts
 

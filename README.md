@@ -1,6 +1,6 @@
 # prtg-skill — Claude Code Skill for PRTG Network Monitor
 
-A Claude Code skill for working with **PRTG Network Monitor** via the PRTG API v2. Includes endpoint references, filter syntax docs, schema references, Spectrum design system guidelines, and utility scripts.
+A Claude Code skill for working with **PRTG Network Monitor** via the PRTG API v2. Includes endpoint references, filter syntax docs, schema references, Spectrum visualization guidelines, and utility scripts.
 
 ## What This Skill Does
 
@@ -8,7 +8,7 @@ When you run `/prtg <task>`, Claude will:
 - Load your PRTG credentials from a `.env` file in the current directory
 - Query the PRTG API v2 using the correct endpoint paths, filter syntax, and auth patterns
 - Apply all known API quirks and gotchas automatically
-- Generate Spectrum-themed HTML dashboards when asked
+- Generate Spectrum-themed visualizations (dashboards, charts, timelines, and summary views) when asked
 - Offer richer visualization presets (heatmaps, timeline stacks, SLA bars, flap ranking, dependency views)
 - Use API v1 only as a targeted fallback when required by endpoint/version gaps
 
@@ -61,9 +61,11 @@ Once the skill is installed, start any PRTG-related task with `/prtg`:
 /prtg how many devices and sensors are there?
 /prtg show me all sensors that are currently down
 /prtg build a status dashboard for group 53
+/prtg build a sensor status heatmap by device group
 /prtg create a ping sensor named "Uptime Check" on device 42
 /prtg rename sensor 2490 to "Web Server Response Time"
 /prtg build a timeseries chart for sensors 2490, 2491, and 2492
+/prtg build a topology-style overview of probe health and cross-site links
 ```
 
 ## What's Included
@@ -76,7 +78,9 @@ prtg-skill/
 │   ├── api-endpoints.md             ← All 115 operations: paths, params, response codes
 │   ├── api-filtering.md             ← Filter syntax, operators, filterable properties
 │   ├── api-schemas.md               ← Request/response body schemas
-│   ├── spectrum-design-system.md    ← Paessler design tokens for dashboard styling
+│   ├── spectrum-design-system.md    ← Compact Spectrum token reference for static visualizations
+│   ├── spectrum-full-system.md      ← Full Spectrum component system for richer UI patterns
+│   ├── spectrum-visualization-guidelines.md ← When to use each + mandatory branding/look-and-feel
 │   └── visualization-patterns.md    ← Visualization module catalog + v2/v1 fallback strategy
 └── scripts/
     ├── update_docs.py               ← Refresh API docs from live PRTG server

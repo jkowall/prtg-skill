@@ -62,7 +62,9 @@ Read these files on-demand (they are large — only read what you need):
 - **`${CLAUDE_SKILL_DIR}/references/api-endpoints.md`** — All endpoint paths, HTTP methods, parameters, and response codes. Read this when you need to know what endpoints exist or their parameters.
 - **`${CLAUDE_SKILL_DIR}/references/api-filtering.md`** — Filter syntax, operators, filterable properties, enum values, and common pitfalls. Read this before constructing any `filter=` query.
 - **`${CLAUDE_SKILL_DIR}/references/api-schemas.md`** — Request/response body schemas with field names, types, and descriptions. Read this when you need to construct a request body or understand a response.
-- **`${CLAUDE_SKILL_DIR}/references/spectrum-design-system.md`** — Spectrum design token reference (colors, typography, spacing, status mappings). **Read this before generating any frontend/dashboard code.**
+- **`${CLAUDE_SKILL_DIR}/references/spectrum-design-system.md`** — Compact Spectrum token reference for static visualizations and dashboards.
+- **`${CLAUDE_SKILL_DIR}/references/spectrum-full-system.md`** — Full Spectrum component and interaction system for richer UI composition.
+- **`${CLAUDE_SKILL_DIR}/references/spectrum-visualization-guidelines.md`** — Decision guide for when to use compact vs full system, plus mandatory branding/look-and-feel rules.
 - **`${CLAUDE_SKILL_DIR}/references/visualization-patterns.md`** — Visualization module catalog with v2-first query plans and v1 fallback triggers. Read this for richer dashboards (heatmaps, timeline stacks, SLA bars, flap ranking, dependency views).
 
 ## Critical Gotchas & Lessons Learned
@@ -234,9 +236,16 @@ while True:
     offset += page_size
 ```
 
-## Dashboard / Frontend Guidelines
+## Visualization / Frontend Guidelines
 
-**Always read `${CLAUDE_SKILL_DIR}/references/spectrum-design-system.md` before generating any HTML/CSS.**
+Support more than dashboards. Valid outputs include status dashboards, timeseries reports, sensor distribution charts, health timelines, topology-like overviews, SLA trend views, and compact NOC wallboard layouts.
+
+Before generating HTML/CSS:
+
+1. Read `${CLAUDE_SKILL_DIR}/references/spectrum-visualization-guidelines.md`.
+2. Choose the right system:
+   - Use `spectrum-design-system.md` for static/lightweight pages.
+   - Use `spectrum-full-system.md` for component-rich, interactive views.
 
 - Link `spectrum.css` (must be in the same directory as generated HTML):
   ```html
@@ -245,6 +254,10 @@ while True:
   Download with: `python3 ${CLAUDE_SKILL_DIR}/scripts/fetch_spectrum.py`
 - Use Spectrum design tokens via CSS custom properties (`var(--token-name)`)
 - Use semantic color tokens, not hardcoded hex values
+- Every visualization MUST include a PRTG-branded top header with:
+  - PRTG logo at top-left (inline SVG wordmark or local image asset)
+  - visualization title and snapshot timestamp
+  - optional context action (for example: "Back to Overview")
 - PRTG status → Spectrum color mapping:
   - UP → `fill-color-success` / `background-color-success-soft` (green)
   - DOWN → `fill-color-danger` / `background-color-danger-soft` (red)
@@ -252,6 +265,7 @@ while True:
   - PAUSED/UNKNOWN → `text-color-disabled` / `background-color-disabled` (grey)
 - Font stack: Roboto, "Segoe UI", Tahoma, Arial, Helvetica, Verdana, sans-serif
 - Base font size: 14px. Spacing unit: 4px multiples.
+- Use card surfaces, consistent spacing rhythm, and clear visual hierarchy (headline, summary KPIs, then details).
 
 ### Charts & Timeseries
 - Use **Chart.js via CDN** (`chart.js` + `chartjs-adapter-date-fns`). No build step required.

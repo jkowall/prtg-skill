@@ -48,6 +48,21 @@ OUT_DIR = sys.argv[1] if len(sys.argv) > 1 else 'demo'
 os.makedirs(OUT_DIR, exist_ok=True)
 E = html_mod.escape
 NOW = datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')
+PRTG_LOGO_SVG = """
+<svg class="brand-mark" viewBox="0 0 56 56" role="img" aria-label="PRTG" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="prtgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F67FF" />
+      <stop offset="100%" stop-color="#050F34" />
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="52" height="52" rx="14" fill="url(#prtgGradient)" />
+  <circle cx="20" cy="28" r="5.5" fill="#FFFFFF" />
+  <circle cx="36" cy="20" r="4.5" fill="#74ABFF" />
+  <circle cx="36" cy="36" r="4.5" fill="#A4AD19" />
+  <path d="M25 28H31M31 28L34 25M31 28L34 31" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+</svg>
+"""
 
 # =====================================================================
 # FETCH ALL DATA
@@ -317,6 +332,13 @@ tr:hover{background:var(--bg-alt)}
 .heatmap-table td,.heatmap-table th{font-size:12px}
 .heat-cell{font-weight:600;text-align:center;border-radius:3px;padding:4px 8px;display:inline-block;min-width:34px}
 .matrix-table td,.matrix-table th{font-size:12px}
+.brand-header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.brand-lockup{display:flex;align-items:center;gap:12px}
+.brand-mark{width:44px;height:44px;display:block}
+.brand-copy h1{margin:0}
+.brand-copy .timestamp{margin-top:2px;display:block}
+.brand-meta{display:flex;align-items:center;gap:10px}
+@media(max-width:700px){.brand-mark{width:40px;height:40px}}
 """
 
 def badge(status):
@@ -335,8 +357,16 @@ print(f"Generating {OUT_DIR}/index.html...")
 
 wt = f"""<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>PRTG Skill Demo Walkthrough</title><style>{SPECTRUM_CSS}</style></head><body><div class="container">
-<h1>PRTG Skill Demo &mdash; Full Walkthrough</h1>
-<p class="timestamp">{E(HOST)} &bull; Snapshot: {NOW}</p>
+<div class="brand-header">
+  <div class="brand-lockup">
+    {PRTG_LOGO_SVG}
+    <div class="brand-copy">
+      <h1>PRTG Skill Demo &mdash; Full Walkthrough</h1>
+      <span class="timestamp">{E(HOST)} &bull; Snapshot: {NOW}</span>
+    </div>
+  </div>
+  <div class="brand-meta"><a href="dashboard.html">Open Dashboard &rarr;</a></div>
+</div>
 <p style="margin:8px 0">Output from all 8 acts of the PRTG Skill demo against the live PRTG instance.</p>
 <div class="nav">
   <a href="#summary">Summary</a><a href="#act1">1: Orientation</a><a href="#act2">2: Triage</a>
@@ -559,13 +589,18 @@ dash = f"""<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3"></script>
 <style>{SPECTRUM_CSS}
-.header{{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px}}
 .section{{margin:32px 0}}
 </style></head><body><div class="container">
 
-<div class="header">
-  <h1>PRTG Infrastructure Dashboard</h1>
-  <div><span class="timestamp">Snapshot: {NOW} &bull; {E(HOST)}</span> &bull; <a href="index.html">&larr; Demo Walkthrough</a></div>
+<div class="brand-header">
+  <div class="brand-lockup">
+    {PRTG_LOGO_SVG}
+    <div class="brand-copy">
+      <h1>PRTG Infrastructure Dashboard</h1>
+      <span class="timestamp">Snapshot: {NOW} &bull; {E(HOST)}</span>
+    </div>
+  </div>
+  <div class="brand-meta"><a href="index.html">&larr; Demo Walkthrough</a></div>
 </div>
 
 <!-- KPIs -->
